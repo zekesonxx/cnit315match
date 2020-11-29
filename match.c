@@ -1,4 +1,5 @@
 #include <ncurses.h>
+#include <stdlib.h>
 #include <unistd.h>
 #define true 1
 #define false 0
@@ -65,8 +66,25 @@ void draw_card(CARD *card) {
 	//refresh();
 }
 
+void handle_potential_collision(CARD *card, int clickx, int clicky) {
+	// Top left position
+	int x = CARDS_START_X+((CARD_SPACING_X+CARD_WIDTH)*card->x);
+	int y = CARDS_START_Y+((CARD_SPACING_Y+CARD_HEIGHT)*card->y);
+	// Bottom right position
+	int w = x+CARD_WIDTH-1;
+	int h = y+CARD_HEIGHT-1;
+	if (x <= clickx && clickx <= w &&
+		y <= clicky && clicky <= h) {
+		if (card->visible == true) {
+			card->visible = false;
+		} else {
+			card->visible = true;
+		}
+	}
+}
+
 int main() {
-	int c, counter = 0;
+	int c;
 	MEVENT event;
 	CARD card1;
 	CARD card2;
@@ -85,6 +103,7 @@ int main() {
 	
 	mousemask(ALL_MOUSE_EVENTS, NULL);
 
+	
 	init_card(&card1, 0, 0, 'K', true);
 	init_card(&card2, 1, 0, 'L', true);
 	init_card(&card3, 0, 1, 'V', true);
@@ -94,6 +113,10 @@ int main() {
 		if (c == KEY_MOUSE && getmouse(&event) == OK) {
 			//Mouse clicked somewhere
 			mvprintw(2, 1, "Mouse clicked at %d %d", event.x+1, event.y+1);
+			handle_potential_collision(&card1, event.x, event.y);
+			handle_potential_collision(&card2, event.x, event.y);
+			handle_potential_collision(&card3, event.x, event.y);
+			handle_potential_collision(&card4, event.x, event.y);
 		}
 		draw_card(&card1);
 		draw_card(&card2);
