@@ -18,6 +18,9 @@
 #define CARDS_START_Y 5
 
 
+// Very temporary, this should be dynamic
+#define NUM_CARDS 12
+
 typedef struct _CARD_struct {
 	// The X and Y of the card, on the grid of the cards
 	// This is not the raw drawing position!
@@ -84,12 +87,9 @@ void handle_potential_collision(CARD *card, int clickx, int clicky) {
 }
 
 int main() {
-	int c;
+	int c, i, j;
 	MEVENT event;
-	CARD card1;
-	CARD card2;
-	CARD card3;
-	CARD card4;
+	CARD cards[NUM_CARDS];
 
 	initscr();
 	clear();
@@ -103,26 +103,30 @@ int main() {
 	
 	mousemask(ALL_MOUSE_EVENTS, NULL);
 
-	
-	init_card(&card1, 0, 0, 'K', true);
-	init_card(&card2, 1, 0, 'L', true);
-	init_card(&card3, 0, 1, 'V', true);
-	init_card(&card4, 1, 1, 'E', false);
+	init_card(&cards[0], 0, 0, 'A', false);
+	init_card(&cards[1], 1, 0, 'B', false);
+	init_card(&cards[2], 2, 0, 'C', false);
+	init_card(&cards[3], 3, 0, 'D', false);
+	init_card(&cards[4], 0, 1, 'E', false);
+	init_card(&cards[5], 1, 1, 'F', false);
+	init_card(&cards[6], 2, 1, 'G', false);
+	init_card(&cards[7], 3, 1, 'H', false);
+	init_card(&cards[8], 0, 2, 'I', false);
+	init_card(&cards[9], 1, 2, 'J', false);
+	init_card(&cards[10], 2, 2, 'K', false);
+	init_card(&cards[11], 3, 2, 'L', false);
 	while (true) {
 		c = getch();
 		if (c == KEY_MOUSE && getmouse(&event) == OK) {
 			//Mouse clicked somewhere
-			mvprintw(2, 1, "Mouse clicked at %d %d", event.x+1, event.y+1);
-			handle_potential_collision(&card1, event.x, event.y);
-			handle_potential_collision(&card2, event.x, event.y);
-			handle_potential_collision(&card3, event.x, event.y);
-			handle_potential_collision(&card4, event.x, event.y);
+			mvprintw(2, 0, "Mouse clicked at %d %d", event.x+1, event.y+1);
+			for (i = 0; i<NUM_CARDS; i++) {
+				handle_potential_collision(&cards[i], event.x, event.y);
+			}
 		}
-		draw_card(&card1);
-		draw_card(&card2);
-		draw_card(&card3);
-		draw_card(&card4);
-		//card2.visible = false;
+		for (i = 0; i<NUM_CARDS; i++) {
+			draw_card(&cards[i]);
+		}
 		refresh();
 	}
 	endwin();
