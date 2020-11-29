@@ -4,11 +4,22 @@
 #define false 0
 
 //potential todo: have this dynamically change based on terminal size?
+// height and width of the cards
 #define CARD_WIDTH 5
 #define CARD_HEIGHT 5
-#define CARD_SPACING 1
+// how much space between cards
+#define CARD_SPACING_X 2
+#define CARD_SPACING_Y 1
+
+// the top-left position of the top-left card
+// we have to leave room for UI/debugging elements
+#define CARDS_START_X 1
+#define CARDS_START_Y 5
+
 
 typedef struct _CARD_struct {
+	// The X and Y of the card, on the grid of the cards
+	// This is not the raw drawing position!
 	int x,y;
 	char value;
 	int visible;
@@ -22,8 +33,10 @@ void init_card(CARD *card, int x, int y, char v, int vis) {
 }
 
 void draw_card(CARD *card) {
-	int x = card->x;
-	int y = card->y;
+	//Top-left position of the card
+	int x = CARDS_START_X+((CARD_SPACING_X+CARD_WIDTH)*card->x);
+	int y = CARDS_START_Y+((CARD_SPACING_Y+CARD_HEIGHT)*card->y);
+
 	int w = CARD_WIDTH-1;
 	int h = CARD_HEIGHT-1;
 	// Find the center of the card, for displaying the value
@@ -72,13 +85,12 @@ int main() {
 	
 	mousemask(ALL_MOUSE_EVENTS, NULL);
 
-	init_card(&card1, 2, 3, 'K', true);
-	init_card(&card2, 6, 3, 'L', true);
-	init_card(&card3, 9, 7, 'V', true);
-	init_card(&card4, 10, 11, 'E', false);
+	init_card(&card1, 0, 0, 'K', true);
+	init_card(&card2, 1, 0, 'L', true);
+	init_card(&card3, 0, 1, 'V', true);
+	init_card(&card4, 1, 1, 'E', false);
 	while (true) {
 		c = getch();
-		mvprintw(1, 0, "%d %d %d", KEY_MOUSE, counter++, OK);
 		if (c == KEY_MOUSE && getmouse(&event) == OK) {
 			//Mouse clicked somewhere
 			mvprintw(2, 1, "Mouse clicked at %d %d", event.x+1, event.y+1);
