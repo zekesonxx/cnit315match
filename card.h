@@ -22,12 +22,16 @@ typedef struct _CARD_struct {
 	int x,y;
 	char value;
 	int visible;
+    int hidden;
 }CARD;
 
-void init_card(CARD *card, int x, int y, char v, int vis);
+void init_card(CARD *card, int x, int y, char v, int vis, int hidden);
 
 void draw_card(CARD *card);
 
-void handle_potential_collision(CARD *card, int clickx, int clicky);
+/*
+ * Returns 1 if the card was clicked (and it was made visible), 0 if the card wasn't clicked
+ */
+int handle_potential_collision(CARD *card, int clickx, int clicky);
 
 #endif
