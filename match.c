@@ -3,8 +3,10 @@
 #define true 1
 #define false 0
 
+//potential todo: have this dynamically change based on terminal size?
 #define CARD_WIDTH 5
 #define CARD_HEIGHT 5
+#define CARD_SPACING 1
 
 typedef struct _CARD_struct {
 	int x,y;
@@ -38,6 +40,8 @@ void draw_card(CARD *card) {
 	mvvline(y+1, x, '|', h-1);
 	mvvline(y+1, x+w, '|', h-1);
 
+	// Draw the value of the card
+	// Either the actual value, or a space to clear the previously drawn value
 	if (card->visible) {
 		mvaddch(cy, cx, card->value);
 	} else {
@@ -45,35 +49,46 @@ void draw_card(CARD *card) {
 	}
 
 	// Refresh the screen
-	refresh();
+	//refresh();
 }
 
 int main() {
-
-	initscr();
-	start_color();
-	cbreak();
-
-	noecho();
-
-	printw("Card matching!");
-	refresh();
-
+	int c, counter = 0;
+	MEVENT event;
 	CARD card1;
 	CARD card2;
 	CARD card3;
 	CARD card4;
+
+	initscr();
+	clear();
+	//start_color();
+	keypad(stdscr, TRUE);
+	cbreak(); //Disable line buffering
+	noecho();
+
+	printw("Card matching!");
+	refresh();
+	
+	mousemask(ALL_MOUSE_EVENTS, NULL);
+
 	init_card(&card1, 2, 3, 'K', true);
 	init_card(&card2, 6, 3, 'L', true);
 	init_card(&card3, 9, 7, 'V', true);
 	init_card(&card4, 10, 11, 'E', false);
 	while (true) {
+		c = getch();
+		mvprintw(1, 0, "%d %d %d", KEY_MOUSE, counter++, OK);
+		if (c == KEY_MOUSE && getmouse(&event) == OK) {
+			//Mouse clicked somewhere
+			mvprintw(2, 1, "Mouse clicked at %d %d", event.x+1, event.y+1);
+		}
 		draw_card(&card1);
 		draw_card(&card2);
 		draw_card(&card3);
 		draw_card(&card4);
-		sleep(2);
-		card2.visible = false;
+		//card2.visible = false;
+		refresh();
 	}
 	endwin();
 	return 0;
