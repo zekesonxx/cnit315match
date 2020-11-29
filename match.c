@@ -35,13 +35,12 @@ int main() {
 	init_card(&cards[10], 2, 2, 'K', false, false);
 	init_card(&cards[11], 3, 2, 'L', false, false);
 	while (true) {
-		c = getch();
 		if (c == KEY_MOUSE && getmouse(&event) == OK) {
 			//Mouse clicked somewhere
 			mvprintw(2, 0, "Mouse clicked at %d %d, clicked=%d           ", event.x+1, event.y+1, clicked);
 			for (i = 0; i<NUM_CARDS; i++) {
 				if (handle_potential_collision(&cards[i], event.x, event.y)) {
-                    mvprintw(1, 0, "Mouse clicked on %d", i);
+                    mvprintw(1, 0, "Mouse clicked on %d   ", i);
                     //Card was clicked
                     if (clicked == -1) {
                         //This is the first card that was clicked, make note of it
@@ -50,7 +49,7 @@ int main() {
                         //Let them see what they clicked
                         draw_card(&cards[i]);
                         refresh();
-                        sleep(2);
+                        sleep(1);
                         //This is the second card that was clicked, see if we matched
                         if (cards[clicked].value == cards[i].value) {
                             // They matched!
@@ -78,6 +77,7 @@ int main() {
         if (remaining == 0) {
             break;
         }
+        c = getch();
 	}
 	endwin();
 	return 0;

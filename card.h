@@ -16,20 +16,35 @@
 // Very temporary, this should be dynamic
 #define NUM_CARDS 12
 
+/*
+ * A card in the matching game
+ */
 typedef struct _CARD_struct {
 	// The X and Y of the card, on the grid of the cards
 	// This is not the raw drawing position!
 	int x,y;
+    // What the face value of the card is, the thing you have to match
 	char value;
+    // Whether the card's value is visible.
 	int visible;
+    // Whether the card is being rendered at all
     int hidden;
 }CARD;
 
+/*
+ * Initializes a card struct with the provided values
+ * Just a conveience function.
+ */
 void init_card(CARD *card, int x, int y, char v, int vis, int hidden);
 
+/*
+ * Draws a card to the screen
+ */
 void draw_card(CARD *card);
 
 /*
+ * Called by the main game loop to determine when a card is clicked
+ * If the card is clicked and it was not already made visible, it will be made visible
  * Returns 1 if the card was clicked (and it was made visible), 0 if the card wasn't clicked
  */
 int handle_potential_collision(CARD *card, int clickx, int clicky);
