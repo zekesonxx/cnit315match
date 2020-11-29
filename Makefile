@@ -1,8 +1,9 @@
 
-OBJS = match.o
+OBJS = match.o card.o
 CFLAGS = -Wall -Wextra -g -pedantic-errors
 CC = gcc
 LIBS = -lm -lncurses
+INCLUDES= -I "${PWD}"
 
 default: build run
 
