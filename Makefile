@@ -11,5 +11,3 @@ build:
 gdb: build
 	gdb ./bin/match
 
-submit: build
-	cp lab$(labnum).c lab$(labnum)_zoeymertes_ghorrati.c
