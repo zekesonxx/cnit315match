@@ -1,13 +1,24 @@
 
+OBJS = match.o
+CFLAGS = -Wall -Wextra -g -pedantic-errors
+CC = gcc
+LIBS = -lm -lncurses
+
 default: build run
 
 run: build
 	./bin/match
 
-build: 
+build: ${OBJS}
 	mkdir -p bin
-	gcc -Wall -Wextra -g -pedantic-errors match.c -o ./bin/match -lm -lncurses
+	${CC} ${CFLAGS} ${INCLUDES} -o ./bin/match ${OBJS} ${LIBS}
 
 gdb: build
 	gdb ./bin/match
 
+clean:
+	-rm -rf bin/
+	-rm -f *.o core *.core
+
+.c.o:
+	${CC} ${CFLAGS} ${INCLUDES} -c $<
