@@ -1,6 +1,6 @@
 
 OBJS = match.o card.o
-CFLAGS = -Wall -Wextra -g -pedantic-errors
+CFLAGS = -Wall -Wextra -g -pedantic-errors -std=c11
 CC = gcc
 LIBS = -lm -lncurses
 INCLUDES= -I "${PWD}"
