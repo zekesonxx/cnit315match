@@ -1,9 +1,13 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <math.h>
 #include <card.h>
 #define true 1
 #define false 0
+
+#define NUM_VALUES 10
+const char VALUES[NUM_VALUES]={'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
 
 void init_card(CARD *card, int x, int y, char v, int vis, int hidden) {
 	card->x = x;
@@ -13,10 +17,38 @@ void init_card(CARD *card, int x, int y, char v, int vis, int hidden) {
     card->hidden = hidden;
 }
 
-void draw_card(CARD *card) {
+
+// Full credit:
+// https://benpfaff.org/writings/clc/shuffle.html
+void shuffle_cards(CARD *cards, int numcards) {
+    if (numcards > 1) {
+        int i;
+        for (i = 0; i < numcards - 1; i++) {
+            int j = i + rand() / (RAND_MAX / (numcards - i) + 1);
+            CARD t = cards[j];
+            cards[j] = cards[i];
+            cards[i] = t;
+        }
+    }
+}
+
+
+void draw_cards(CARD *cards, int numcards) {
+    int gridheight = (int) floor(sqrt((double) numcards));
+    int gridwidth = numcards/gridheight;
+    int card = 0;
+    for (int gridx = 0; gridx<gridwidth; gridx++) {
+        for (int gridy = 0; gridy<gridheight; gridy++) {
+            draw_card(&cards[card], gridx, gridy);
+            card++;
+        }
+    }
+}
+
+void draw_card(CARD *card, int gridx, int gridy) {
     //Top-left position of the card
-    int x = CARDS_START_X+((CARD_SPACING_X+CARD_WIDTH)*card->x);
-    int y = CARDS_START_Y+((CARD_SPACING_Y+CARD_HEIGHT)*card->y);
+    int x = CARDS_START_X+((CARD_SPACING_X+CARD_WIDTH)*gridx);
+    int y = CARDS_START_Y+((CARD_SPACING_Y+CARD_HEIGHT)*gridy);
 
     int w = CARD_WIDTH-1;
     int h = CARD_HEIGHT-1;
@@ -55,23 +87,31 @@ void draw_card(CARD *card) {
     }
 }
 
-int handle_potential_collision(CARD *card, int clickx, int clicky) {
-    //If the card isn't being rendered, don't register clicks against it
-    if (card->hidden) return 0;
-	// Top left position
-	int x = CARDS_START_X+((CARD_SPACING_X+CARD_WIDTH)*card->x);
-	int y = CARDS_START_Y+((CARD_SPACING_Y+CARD_HEIGHT)*card->y);
-	// Bottom right position
-	int w = x+CARD_WIDTH-1;
-	int h = y+CARD_HEIGHT-1;
-	if (x <= clickx && clickx <= w &&
-		y <= clicky && clicky <= h) {
-		if (card->visible == true) {
-			//card->visible = false;
-		} else {
-			card->visible = true;
-		}
-		return 1;
-	}
-	return 0;
+int handle_potential_collision(CARD *cards, int numcards, int clickx, int clicky) {
+    int gridheight = (int) floor(sqrt((double) numcards));
+    int gridwidth = numcards/gridheight;
+    int card = 0;
+    for (int gridx = 0; gridx<gridwidth; gridx++) {
+        for (int gridy = 0; gridy<gridheight; gridy++) {
+                if (!cards[card].hidden) {
+                    // Top left position
+                    int x = CARDS_START_X+((CARD_SPACING_X+CARD_WIDTH)*gridx);
+                    int y = CARDS_START_Y+((CARD_SPACING_Y+CARD_HEIGHT)*gridy);
+                    // Bottom right position
+                    int w = x+CARD_WIDTH-1;
+                    int h = y+CARD_HEIGHT-1;
+                    if (x <= clickx && clickx <= w &&
+                        y <= clicky && clicky <= h) {
+                        if (cards[card].visible == true) {
+                            //card->visible = false;
+                        } else {
+                            cards[card].visible = true;
+                        }
+                        return card;
+                    }
+                }
+                card++;
+        }
+    }
+    return -1;
 }

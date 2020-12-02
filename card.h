@@ -38,15 +38,26 @@ typedef struct _CARD_struct {
 void init_card(CARD *card, int x, int y, char v, int vis, int hidden);
 
 /*
+ * Shuffles an array of cards
+ */
+void shuffle_cards(CARD *cards, int numcards);
+
+
+/*
  * Draws a card to the screen
  */
-void draw_card(CARD *card);
+void draw_card(CARD *card, int gridx, int gridy);
+
+/* 
+ * Draw an array of cards to the screen
+ */
+void draw_cards(CARD *cards, int numcards);
 
 /*
  * Called by the main game loop to determine when a card is clicked
  * If the card is clicked and it was not already made visible, it will be made visible
  * Returns 1 if the card was clicked (and it was made visible), 0 if the card wasn't clicked
  */
-int handle_potential_collision(CARD *card, int clickx, int clicky);
+int handle_potential_collision(CARD *cards, int numcards, int clickx, int clicky);
 
 #endif
