@@ -5,7 +5,7 @@
 #define true 1
 #define false 0
 
-int play_game(int numcards) {
+int play_game(int numcards, int unfun_mode) {
     int c, i, clicked = -1;
     // how many times the player has clicked on a card
     int clicks = 0;
@@ -52,6 +52,14 @@ int play_game(int numcards) {
                         cards[clicked].hidden = true;
                         cards[i].hidden = true;
                         remaining--;
+						if (unfun_mode) {
+							//shuffle the deck every match
+							draw_cards(cards, numcards);
+							refresh();
+							napms(500);
+							timer += 5;
+							shuffle_cards(cards, numcards);
+						}
                     } else {
                         // No match, hide and move on
                         cards[clicked].visible = false;
@@ -63,6 +71,8 @@ int play_game(int numcards) {
 			}
 		}
 	}
+	
+	free(cards);
 	
 	nocbreak(); //disable halfdelay
 	keypad(stdscr, TRUE);
@@ -87,14 +97,13 @@ int play_game(int numcards) {
 	refresh();
 	do {
 		c = getch();
-		mvprintw(8, 1, "x=%d, y=%d", event.x, event.y);
 		if (c == KEY_MOUSE && getmouse(&event) == OK && event.y == 6) {
 			if (event.x >= 1 && event.x <= 6) {
 				//YES
-				mvprintw(7, 1, "  YES  ");
+				return 1;
 			} else if (event.x >= 7 && event.x <= 11) {
 				//NO
-				mvprintw(7, 1, "  NO  ");
+				return 0;
 			}
 		}
 		refresh();
@@ -103,6 +112,8 @@ int play_game(int numcards) {
 }
 
 int main() {
+	int c, again = 1, mode = 0;
+	MEVENT event;
 
 	initscr();
 	clear();
@@ -114,9 +125,53 @@ int main() {
 	
 	mousemask(ALL_MOUSE_EVENTS, NULL);
 	
-	
-	
-    play_game(6);
+	while (again == 1) {
+		clear();
+		mvprintw(1, 1, "A card matching game.");
+		mvprintw(2, 1, "Choose a difficulty: ");
+		attron(A_REVERSE);
+		mvprintw(6,  1, "  TOO EASY ");
+		mvprintw(8,  1, "    EASY   ");
+		mvprintw(10, 1, "   MEDIUM  ");
+		mvprintw(12, 1, "    HARD   ");
+		mvprintw(14, 1, "  NOT FUN  ");
+		attroff(A_REVERSE);
+		
+		do {
+			c = getch();
+			// See if the user clicked one of the buttons, or it's some other event
+			if (c == KEY_MOUSE && getmouse(&event) == OK && event.x >= 1 && event.x <= 11) {
+				switch (event.y) {
+					case 6:
+					case 8:
+					case 10:
+					case 12:
+					case 14:
+						// Set the mode, which will break us out of the loop
+						mode = event.y;
+						break;
+				}
+			}
+			refresh();
+		} while (mode == 0);
+		switch (mode) {
+			case 6:
+				again = play_game(6, 0);
+				break;
+			case 8:
+				again = play_game(16, 0);
+				break;
+			case 10:
+				again = play_game(24, 0);
+				break;
+			case 12:
+				again = play_game(40, 0);
+				break;
+			case 14:
+				again = play_game(40, 1);
+				break;
+		}
+	}
 
 	endwin();
 	return 0;
