@@ -9,6 +9,9 @@
 #define NUM_VALUES 25
 const char VALUES[NUM_VALUES]="ABCDEFGHIJKLMNOP123456789";
 
+int CARDS_START_X = CARDS_MIN_START_X;
+int CARDS_START_Y = CARDS_MIN_START_Y;
+
 void init_card(CARD *card, char value) {
 	card->value = value;
 	card->visible = false;
@@ -58,35 +61,51 @@ void shuffle_cards(CARD *cards, int numcards) {
  * Basically, it tries to put the cards in an even split.
  * If it can't, it sees if we're limited on either aspect ratio.
  * If it can't do that, it puts them in a square.
+ * 
+ * This function also recalculates CARDS_START_X and CARDS_START_Y when called.
  */
 void calculate_grid(int numcards, int* gridwidth, int* gridheight) {
-    int max_grid_cols = (COLS-CARDS_START_X)/(CARD_SPACING_X+CARD_WIDTH);
-    int max_grid_rows = (LINES-CARDS_START_Y)/(CARD_SPACING_Y+CARD_HEIGHT);
+    *gridwidth = 0;
+    *gridheight = 0;
+    int max_grid_cols = (COLS-CARDS_MIN_START_X)/(CARD_SPACING_X+CARD_WIDTH);
+    int max_grid_rows = (LINES-CARDS_MIN_START_Y)/(CARD_SPACING_Y+CARD_HEIGHT);
     int square = (int) ceil(sqrt((double) numcards));
     
-    
-    // Can we make it an even split horizontally?
+    // Can we make it an aesthetically pleasing even split horizontally?
     for (int potential_height = max_grid_cols; potential_height>=(square/2); potential_height--) {
-        if (numcards%potential_height == 0 && max_grid_rows>=numcards/potential_height) {
+        if (numcards%potential_height == 0
+            && max_grid_rows>=numcards/potential_height
+            && numcards/potential_height > 2) {
             //We can evenly divide it nicely
             *gridheight = potential_height;
             *gridwidth = numcards/potential_height;
-            return;
+            break;
         }
     }
-    if (max_grid_rows < square) {
-        //Terminal is too short, so squeeze horizontally
-        *gridwidth = max_grid_rows;
-        *gridheight = (int) ceil((double) numcards/(double) max_grid_rows);
-    } else if (max_grid_cols < square) {
-        //Terminal is too skinny, so squeeze vertically
-        *gridheight = max_grid_cols;
-        *gridwidth = (int) ceil((double) numcards/(double) max_grid_cols);
-    } else {
-        //Terminal is big enough to put the cards in a square
-        *gridheight = square;
-        *gridwidth = square;
+    if (*gridwidth == 0 && *gridheight == 0) {
+        //if we couldn't calculate an ideal split above, go for compromise splits
+        if (max_grid_rows < square) {
+            //Terminal is too short, so squeeze horizontally
+            *gridwidth = max_grid_rows;
+            *gridheight = (int) ceil((double) numcards/(double) max_grid_rows);
+        } else if (max_grid_cols < square) {
+            //Terminal is too skinny, so squeeze vertically
+            *gridheight = max_grid_cols;
+            *gridwidth = (int) ceil((double) numcards/(double) max_grid_cols);
+        } else {
+            //Terminal is big enough to put the cards in a square
+            *gridheight = square;
+            *gridwidth = square;
+        }
     }
+    //recalculate CARDS_START_X and CARDS_START_Y
+    CARDS_START_X = (COLS-CARDS_MIN_START_X) - (*gridheight)*(CARD_SPACING_X+CARD_WIDTH);
+    CARDS_START_X /= 2;
+    CARDS_START_X += CARDS_MIN_START_X;
+    CARDS_START_Y = (LINES-CARDS_MIN_START_Y) - ((*gridwidth)*(CARD_SPACING_Y+CARD_HEIGHT));
+    CARDS_START_Y /= 2;
+    CARDS_START_Y += CARDS_MIN_START_Y;
+    
 }
 
 void draw_cards(CARD *cards, int numcards) {

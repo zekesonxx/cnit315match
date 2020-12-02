@@ -6,7 +6,7 @@
 #define false 0
 
 // Very temporary, this should be dynamic
-#define NUM_CARDS 50
+#define NUM_CARDS 32
 
 int main() {
 	int c, i, clicked = -1, remaining=NUM_CARDS/2;

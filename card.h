@@ -10,8 +10,8 @@
 
 // the top-left position of the top-left card
 // we have to leave room for UI/debugging elements
-#define CARDS_START_X 1
-#define CARDS_START_Y 5
+#define CARDS_MIN_START_X 1
+#define CARDS_MIN_START_Y 5
 
 /*
  * A card in the matching game
