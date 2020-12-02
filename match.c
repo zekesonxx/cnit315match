@@ -84,10 +84,10 @@ int play_game(int numcards, int unfun_mode) {
 	mvprintw(1, 1, "You won!");
 	if (timer > 600) {
 		//more than a minute
-		mvprintw(2, 1, "%d clicks in %d minutes %d seconds", (timer/10)/60, (timer/10)%60);
+		mvprintw(2, 1, "%d clicks in %d minutes %d seconds", clicks, (timer/10)/60, (timer/10)%60);
 	} else {
 		//less than a minute
-		mvprintw(2, 1, "%d clicks in %d minutes %d seconds", (timer/10)%60);
+		mvprintw(2, 1, "%d clicks in %d seconds", clicks, (timer/10)%60);
 	}
 	mvprintw(5, 1, "Play again?");
 	attron(A_REVERSE);
