@@ -20,12 +20,12 @@ typedef struct _CARD_struct {
 	// The X and Y of the card, on the grid of the cards
 	// This is not the raw drawing position!
 	int x,y;
-    // What the face value of the card is, the thing you have to match
+	// What the face value of the card is, the thing you have to match
 	char value;
-    // Whether the card's value is visible.
+	// Whether the card's value is visible.
 	int visible;
-    // Whether the card is being rendered at all
-    int hidden;
+	// Whether the card is being rendered at all
+	int hidden;
 }CARD;
 
 /*

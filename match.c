@@ -6,52 +6,52 @@
 #define false 0
 
 int play_game(int numcards, int unfun_mode) {
-    int c, i, clicked = -1;
-    // how many times the player has clicked on a card
-    int clicks = 0;
-    // how many matches are still in play
-    int remaining=numcards/2;
-    // game timer, in tenths of a second
-    int timer=0;
+	int c, i, clicked = -1;
+	// how many times the player has clicked on a card
+	int clicks = 0;
+	// how many matches are still in play
+	int remaining=numcards/2;
+	// game timer, in tenths of a second
+	int timer=0;
 	MEVENT event;
 	CARD* cards;
-    cards = init_cards(numcards);
-    halfdelay(1);
-    // The game
+	cards = init_cards(numcards);
+	halfdelay(1);
+	// The game
 	while (remaining != 0) {
-        clear();
-        mvprintw(0, 0, "Matching Game!");
-        mvprintw(1, 0, "Remaining matches: %d", remaining);
-        mvprintw(2, 0, "Clicks taken: %d", clicks);
-        mvprintw(3, 0, "Timer: %02d:%02d", (timer/10)/60, (timer/10)%60);
-        draw_cards(cards, numcards);
+		clear();
+		mvprintw(0, 0, "Matching Game!");
+		mvprintw(1, 0, "Remaining matches: %d", remaining);
+		mvprintw(2, 0, "Clicks taken: %d", clicks);
+		mvprintw(3, 0, "Timer: %02d:%02d", (timer/10)/60, (timer/10)%60);
+		draw_cards(cards, numcards);
 		refresh();
-        
-        c = getch();
-        if (c == ERR) {
-            //This is a timer call from halfdelay
-            timer += 1;
-        } else if (c == KEY_MOUSE && getmouse(&event) == OK) {
+		
+		c = getch();
+		if (c == ERR) {
+			//This is a timer call from halfdelay
+			timer += 1;
+		} else if (c == KEY_MOUSE && getmouse(&event) == OK) {
 			//Mouse clicked somewhere
-            i = handle_potential_collision(cards, numcards, event.x, event.y);
-            if (i != -1) {
-                //Card was clicked
-                clicks++;
-                if (clicked == -1) {
-                    //This is the first card that was clicked, make note of it
-                    clicked = i;
-                } else if (clicked != i) { //Only compare if they didn't click the same card again
-                    //Let them see what they clicked
-                    draw_cards(cards, numcards);
-                    refresh();
-                    napms(500);
-                    timer += 5;
-                    //This is the second card that was clicked, see if we matched
-                    if (cards[clicked].value == cards[i].value) {
-                        // They matched!
-                        cards[clicked].hidden = true;
-                        cards[i].hidden = true;
-                        remaining--;
+			i = handle_potential_collision(cards, numcards, event.x, event.y);
+			if (i != -1) {
+				//Card was clicked
+				clicks++;
+				if (clicked == -1) {
+					//This is the first card that was clicked, make note of it
+					clicked = i;
+				} else if (clicked != i) { //Only compare if they didn't click the same card again
+					//Let them see what they clicked
+					draw_cards(cards, numcards);
+					refresh();
+					napms(500);
+					timer += 5;
+					//This is the second card that was clicked, see if we matched
+					if (cards[clicked].value == cards[i].value) {
+						// They matched!
+						cards[clicked].hidden = true;
+						cards[i].hidden = true;
+						remaining--;
 						if (unfun_mode) {
 							//shuffle the deck every match
 							draw_cards(cards, numcards);
@@ -60,14 +60,14 @@ int play_game(int numcards, int unfun_mode) {
 							timer += 5;
 							shuffle_cards(cards, numcards);
 						}
-                    } else {
-                        // No match, hide and move on
-                        cards[clicked].visible = false;
-                        cards[i].visible = false;
-                    }
-                    // Reset the clicked value
-                    clicked = -1;
-                }
+					} else {
+						// No match, hide and move on
+						cards[clicked].visible = false;
+						cards[i].visible = false;
+					}
+					// Reset the clicked value
+					clicked = -1;
+				}
 			}
 		}
 	}
@@ -108,7 +108,7 @@ int play_game(int numcards, int unfun_mode) {
 		}
 		refresh();
 	} while (1);
-    
+	
 }
 
 int main() {
