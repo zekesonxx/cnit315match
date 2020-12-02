@@ -37,7 +37,11 @@ CARD* init_cards(int numcards) {
         init_card(&cards[i], VALUES[i/2]);
         init_card(&cards[i+1], VALUES[i/2]);
     }
-    shuffle_cards(cards, numcards);
+    for (int i = 0; i < getpid()/3; i++) {
+		//shuffle the deck many many times
+		//use the process id as a "seed"
+		shuffle_cards(cards, numcards);
+	}
     return cards;
 }
 
