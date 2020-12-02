@@ -6,13 +6,36 @@
 #define true 1
 #define false 0
 
-#define NUM_VALUES 10
-const char VALUES[NUM_VALUES]={'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
+#define NUM_VALUES 25
+const char VALUES[NUM_VALUES]="ABCDEFGHIJKLMNOP123456789";
 
-void init_card(CARD *card, char v, int vis, int hidden) {
-	card->value = v;
-	card->visible = vis;
-    card->hidden = hidden;
+void init_card(CARD *card, char value) {
+	card->value = value;
+	card->visible = false;
+    card->hidden = false;
+}
+
+CARD* init_cards(int numcards) {
+    if (numcards%2 != 0) {
+        printf("Programmer error: numcards isn't even");
+        exit(2);
+    } else if (numcards/2 > NUM_VALUES) {
+        printf("Programmer error: not enough values for the cards");
+        exit(2);
+    }
+	CARD* cards = malloc(numcards*sizeof(CARD));
+    if (cards == NULL) {
+        printf("Failed to allocate memory.\n");
+        exit(2);
+    }
+    // Put in two matching cards at a time
+    // Doesn't matter that they're next to each other since they get shuffled after
+    for (int i = 0; i < numcards; i+=2) {
+        init_card(&cards[i], VALUES[i/2]);
+        init_card(&cards[i+1], VALUES[i/2]);
+    }
+    shuffle_cards(cards, numcards);
+    return cards;
 }
 
 // Full credit:

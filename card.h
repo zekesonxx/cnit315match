@@ -13,9 +13,6 @@
 #define CARDS_START_X 1
 #define CARDS_START_Y 5
 
-// Very temporary, this should be dynamic
-#define NUM_CARDS 12
-
 /*
  * A card in the matching game
  */
@@ -35,7 +32,12 @@ typedef struct _CARD_struct {
  * Initializes a card struct with the provided values
  * Just a conveience function.
  */
-void init_card(CARD *card, char v, int vis, int hidden);
+void init_card(CARD *card, char value);
+
+/*
+ * Allocates and returns a shuffled array of cards for the given size.
+ */
+CARD* init_cards(int numcards);
 
 /*
  * Shuffles an array of cards
