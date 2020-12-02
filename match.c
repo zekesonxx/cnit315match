@@ -22,18 +22,18 @@ int main() {
 	
 	mousemask(ALL_MOUSE_EVENTS, NULL);
 
-	init_card(&cards[0], 0, 0, 'B', false, false);
-	init_card(&cards[1], 1, 0, 'A', false, false);
-	init_card(&cards[2], 2, 0, 'C', false, false);
-	init_card(&cards[3], 3, 0, 'D', false, false);
-	init_card(&cards[4], 0, 1, 'K', false, false);
-	init_card(&cards[5], 1, 1, 'B', false, false);
-	init_card(&cards[6], 2, 1, 'A', false, false);
-	init_card(&cards[7], 3, 1, 'D', false, false);
-	init_card(&cards[8], 0, 2, 'C', false, false);
-	init_card(&cards[9], 1, 2, 'L', false, false);
-	init_card(&cards[10], 2, 2, 'K', false, false);
-	init_card(&cards[11], 3, 2, 'L', false, false);
+	init_card(&cards[0], 'B', false, false);
+	init_card(&cards[1], 'A', false, false);
+	init_card(&cards[2], 'C', false, false);
+	init_card(&cards[3], 'D', false, false);
+	init_card(&cards[4], 'K', false, false);
+	init_card(&cards[5], 'B', false, false);
+	init_card(&cards[6], 'A', false, false);
+	init_card(&cards[7], 'D', false, false);
+	init_card(&cards[8], 'C', false, false);
+	init_card(&cards[9], 'L', false, false);
+	init_card(&cards[10], 'K', false, false);
+	init_card(&cards[11], 'L', false, false);
     shuffle_cards(cards, NUM_CARDS);
 	while (true) {
 		if (c == KEY_MOUSE && getmouse(&event) == OK) {

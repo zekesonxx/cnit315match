@@ -35,7 +35,7 @@ typedef struct _CARD_struct {
  * Initializes a card struct with the provided values
  * Just a conveience function.
  */
-void init_card(CARD *card, int x, int y, char v, int vis, int hidden);
+void init_card(CARD *card, char v, int vis, int hidden);
 
 /*
  * Shuffles an array of cards

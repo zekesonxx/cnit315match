@@ -9,14 +9,11 @@
 #define NUM_VALUES 10
 const char VALUES[NUM_VALUES]={'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
 
-void init_card(CARD *card, int x, int y, char v, int vis, int hidden) {
-	card->x = x;
-	card->y = y;
+void init_card(CARD *card, char v, int vis, int hidden) {
 	card->value = v;
 	card->visible = vis;
     card->hidden = hidden;
 }
-
 
 // Full credit:
 // https://benpfaff.org/writings/clc/shuffle.html
