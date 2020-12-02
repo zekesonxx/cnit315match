@@ -5,41 +5,33 @@
 #define true 1
 #define false 0
 
-// Very temporary, this should be dynamic
-#define NUM_CARDS 32
-
-int main() {
-	int c, i, clicked = -1, remaining=NUM_CARDS/2;
+int play_game(int numcards) {
+    int c, i, clicks = 0, clicked = -1, remaining=numcards/2;
 	MEVENT event;
 	CARD* cards;
-
-	initscr();
-	clear();
-	//start_color();
-	keypad(stdscr, TRUE);
-	cbreak(); //Disable line buffering
-	noecho();
-
-	printw("Card matching!");
-	refresh();
-	
-	mousemask(ALL_MOUSE_EVENTS, NULL);
+    cards = init_cards(numcards);
     
-    cards = init_cards(NUM_CARDS);
-	while (true) {
+    // The game
+	while (remaining != 0) {
+        clear();
+        mvprintw(0, 0, "Matching Game!");
+        mvprintw(1, 0, "Remaining matches: %d", remaining);
+        mvprintw(2, 0, "Clicks taken: %d", clicks);
+        draw_cards(cards, numcards);
+		refresh();
+        c = getch();
 		if (c == KEY_MOUSE && getmouse(&event) == OK) {
 			//Mouse clicked somewhere
-			mvprintw(2, 0, "Mouse clicked at %d %d, clicked=%d           ", event.x+1, event.y+1, clicked);
-            i = handle_potential_collision(cards, NUM_CARDS, event.x, event.y);
+            i = handle_potential_collision(cards, numcards, event.x, event.y);
             if (i != -1) {
-                mvprintw(1, 0, "Mouse clicked on %d   ", i);
+                clicks++;
                 //Card was clicked
                 if (clicked == -1) {
                     //This is the first card that was clicked, make note of it
                     clicked = i;
                 } else if (clicked != i) { //Only compare if they didn't click the same card again
                     //Let them see what they clicked
-                    draw_cards(cards, NUM_CARDS);
+                    draw_cards(cards, numcards);
                     refresh();
                     sleep(1);
                     //This is the second card that was clicked, see if we matched
@@ -58,18 +50,29 @@ int main() {
                 }
 			}
 		}
-		mvprintw(0, 16, "Remaining: %d  ", remaining);
-        draw_cards(cards, NUM_CARDS);
-		/*for (i = 0; i<NUM_CARDS; i++) {
-			draw_card(&cards[i]);
-		}*/
-		refresh();
-        if (remaining == 0) {
-            break;
-        }
-        c = getch();
-        clear();
 	}
+	
+	// Post game
+	
+    
+}
+
+int main() {
+
+	initscr();
+	clear();
+	//start_color();
+	keypad(stdscr, TRUE);
+	cbreak(); //Disable line buffering
+	noecho();
+
+	printw("Card matching!");
+	refresh();
+	
+	mousemask(ALL_MOUSE_EVENTS, NULL);
+    
+    play_game(6);
+
 	endwin();
 	return 0;
 }
