@@ -52,20 +52,38 @@ void shuffle_cards(CARD *cards, int numcards) {
     }
 }
 
+/*
+ * Calculate the grid size, given the number of cards and current terminal size
+ * This looks a bit scary at first but isn't that bad
+ * Basically, it tries to put the cards in an even split.
+ * If it can't, it sees if we're limited on either aspect ratio.
+ * If it can't do that, it puts them in a square.
+ */
 void calculate_grid(int numcards, int* gridwidth, int* gridheight) {
     int max_grid_cols = (COLS-CARDS_START_X)/(CARD_SPACING_X+CARD_WIDTH);
     int max_grid_rows = (LINES-CARDS_START_Y)/(CARD_SPACING_Y+CARD_HEIGHT);
     int square = (int) ceil(sqrt((double) numcards));
-    mvprintw(1, 0, "max_grid_cols=%d, max_grid_rows=%d, square=%d", max_grid_cols, max_grid_rows, square);
+    
+    
+    // Can we make it an even split horizontally?
+    for (int potential_height = max_grid_cols; potential_height>=(square/2); potential_height--) {
+        if (numcards%potential_height == 0 && max_grid_rows>=numcards/potential_height) {
+            //We can evenly divide it nicely
+            *gridheight = potential_height;
+            *gridwidth = numcards/potential_height;
+            return;
+        }
+    }
     if (max_grid_rows < square) {
-        mvhline(4, 0, '#', COLS);
+        //Terminal is too short, so squeeze horizontally
         *gridwidth = max_grid_rows;
-        *gridheight = (int) ceil((double) numcards/(double) max_grid_rows);;
+        *gridheight = (int) ceil((double) numcards/(double) max_grid_rows);
     } else if (max_grid_cols < square) {
-        mvvline(0, 4, '#', LINES);
+        //Terminal is too skinny, so squeeze vertically
         *gridheight = max_grid_cols;
         *gridwidth = (int) ceil((double) numcards/(double) max_grid_cols);
     } else {
+        //Terminal is big enough to put the cards in a square
         *gridheight = square;
         *gridwidth = square;
     }
@@ -74,7 +92,6 @@ void calculate_grid(int numcards, int* gridwidth, int* gridheight) {
 void draw_cards(CARD *cards, int numcards) {
     int gridwidth, gridheight;
     calculate_grid(numcards, &gridwidth, &gridheight);
-    mvprintw(2, 0, "%dx%d=%d%c", gridwidth, gridheight, gridwidth*gridheight, gridwidth*gridheight<numcards?'!':' ');
     int card = 0;
     for (int gridy = 0; gridy<gridwidth; gridy++) {
         for (int gridx = 0; gridx<gridheight; gridx++) {
