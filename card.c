@@ -143,6 +143,7 @@ void draw_card(CARD *card, int gridx, int gridy) {
         mvvline(y+1, x+w, ' ', h-1);
         mvaddch(cy, cx, ' ');
     } else {
+		if (card->visible) attron(A_BOLD);
         // Draw the box of the card
         mvaddch(y, x, '+');
         mvaddch(y, x+w, '+');
@@ -160,6 +161,7 @@ void draw_card(CARD *card, int gridx, int gridy) {
         } else {
             mvaddch(cy, cx, ' ');
         }
+        attroff(A_BOLD);
     }
 }
 
