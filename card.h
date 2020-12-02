@@ -2,7 +2,7 @@
 #define CARD_H
 //potential todo: have this dynamically change based on terminal size?
 // height and width of the cards
-#define CARD_WIDTH 5
+#define CARD_WIDTH 7
 #define CARD_HEIGHT 5
 // how much space between cards
 #define CARD_SPACING_X 2

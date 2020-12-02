@@ -52,15 +52,35 @@ void shuffle_cards(CARD *cards, int numcards) {
     }
 }
 
+void calculate_grid(int numcards, int* gridwidth, int* gridheight) {
+    int max_grid_cols = (COLS-CARDS_START_X)/(CARD_SPACING_X+CARD_WIDTH);
+    int max_grid_rows = (LINES-CARDS_START_Y)/(CARD_SPACING_Y+CARD_HEIGHT);
+    int square = (int) ceil(sqrt((double) numcards));
+    mvprintw(1, 0, "max_grid_cols=%d, max_grid_rows=%d, square=%d", max_grid_cols, max_grid_rows, square);
+    if (max_grid_rows < square) {
+        mvhline(4, 0, '#', COLS);
+        *gridwidth = max_grid_rows;
+        *gridheight = (int) ceil((double) numcards/(double) max_grid_rows);;
+    } else if (max_grid_cols < square) {
+        mvvline(0, 4, '#', LINES);
+        *gridheight = max_grid_cols;
+        *gridwidth = (int) ceil((double) numcards/(double) max_grid_cols);
+    } else {
+        *gridheight = square;
+        *gridwidth = square;
+    }
+}
 
 void draw_cards(CARD *cards, int numcards) {
-    int gridheight = (int) floor(sqrt((double) numcards));
-    int gridwidth = numcards/gridheight;
+    int gridwidth, gridheight;
+    calculate_grid(numcards, &gridwidth, &gridheight);
+    mvprintw(2, 0, "%dx%d=%d%c", gridwidth, gridheight, gridwidth*gridheight, gridwidth*gridheight<numcards?'!':' ');
     int card = 0;
-    for (int gridx = 0; gridx<gridwidth; gridx++) {
-        for (int gridy = 0; gridy<gridheight; gridy++) {
+    for (int gridy = 0; gridy<gridwidth; gridy++) {
+        for (int gridx = 0; gridx<gridheight; gridx++) {
             draw_card(&cards[card], gridx, gridy);
             card++;
+            if (card > numcards) return;
         }
     }
 }
@@ -108,11 +128,11 @@ void draw_card(CARD *card, int gridx, int gridy) {
 }
 
 int handle_potential_collision(CARD *cards, int numcards, int clickx, int clicky) {
-    int gridheight = (int) floor(sqrt((double) numcards));
-    int gridwidth = numcards/gridheight;
+    int gridwidth, gridheight;
+    calculate_grid(numcards, &gridwidth, &gridheight);
     int card = 0;
-    for (int gridx = 0; gridx<gridwidth; gridx++) {
-        for (int gridy = 0; gridy<gridheight; gridy++) {
+    for (int gridy = 0; gridy<gridwidth; gridy++) {
+        for (int gridx = 0; gridx<gridheight; gridx++) {
                 if (!cards[card].hidden) {
                     // Top left position
                     int x = CARDS_START_X+((CARD_SPACING_X+CARD_WIDTH)*gridx);

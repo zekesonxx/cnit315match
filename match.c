@@ -68,6 +68,7 @@ int main() {
             break;
         }
         c = getch();
+        clear();
 	}
 	endwin();
 	return 0;
