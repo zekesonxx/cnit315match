@@ -65,9 +65,40 @@ int play_game(int numcards) {
 	}
 	
 	nocbreak(); //disable halfdelay
+	keypad(stdscr, TRUE);
+	cbreak();
 	
 	// Post game
+	clear();
 	
+	mvprintw(1, 1, "You won!");
+	if (timer > 600) {
+		//more than a minute
+		mvprintw(2, 1, "%d clicks in %d minutes %d seconds", (timer/10)/60, (timer/10)%60);
+	} else {
+		//less than a minute
+		mvprintw(2, 1, "%d clicks in %d minutes %d seconds", (timer/10)%60);
+	}
+	mvprintw(5, 1, "Play again?");
+	attron(A_REVERSE);
+	mvprintw(6, 1, " YES ");
+	mvprintw(6, 7, " NO ");
+	attroff(A_REVERSE);
+	refresh();
+	do {
+		c = getch();
+		mvprintw(8, 1, "x=%d, y=%d", event.x, event.y);
+		if (c == KEY_MOUSE && getmouse(&event) == OK && event.y == 6) {
+			if (event.x >= 1 && event.x <= 6) {
+				//YES
+				mvprintw(7, 1, "  YES  ");
+			} else if (event.x >= 7 && event.x <= 11) {
+				//NO
+				mvprintw(7, 1, "  NO  ");
+			}
+		}
+		refresh();
+	} while (1);
     
 }
 
@@ -85,7 +116,7 @@ int main() {
 	
 	
 	
-    play_game(34);
+    play_game(6);
 
 	endwin();
 	return 0;
